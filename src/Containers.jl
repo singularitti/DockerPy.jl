@@ -51,8 +51,8 @@ function exec_run(
         workdir,
         demux,
     )
-    if stream || socket
-        @warn "`stream` or `socket` is `true`! Unable to determine if there is an error!"
+    if stream || socket || detach
+        @warn "`detach`, `stream` or `socket` is `true`! Unable to determine if there is an error!"
     else
         exit_code = first(exec_result)
         if !iszero(exit_code)
