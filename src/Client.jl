@@ -2,7 +2,7 @@ module Client
 
 using PyCall: PyObject
 
-using DockerPy: docker, @pyinterface
+using DockerPy: Collection, docker, @pyinterface
 using DockerPy.Images: Image
 using DockerPy.Containers: Container
 
@@ -13,8 +13,8 @@ mutable struct DockerClient
 end
 DockerClient() = DockerClient(docker.client.DockerClient())
 
-images(client::DockerClient) = map(Image, PyObject(client).images.list())
-containers(client::DockerClient) = map(Container, PyObject(client).containers.list())
+images(client::DockerClient) = Collection{Image}(PyObject(client).images)
+containers(client::DockerClient) = Collection{Container}(PyObject(client).containers)
 
 from_env() = DockerClient(docker.from_env())
 
