@@ -20,7 +20,7 @@ Container(
     kwargs...,
 ) = image.client.containers.run(image.id, command, stdout, stderr, remove, kwargs...)
 
-exec_run(
+function exec_run(
     container::Container,
     cmd;
     stdout = true,
@@ -35,21 +35,32 @@ exec_run(
     environment = nothing,
     workdir = nothing,
     demux = false,
-) = PyObject(container).exec_run(
-    cmd,
-    stdout,
-    stderr,
-    stdin,
-    tty,
-    privileged,
-    user,
-    detach,
-    stream,
-    socket,
-    environment,
-    workdir,
-    demux,
 )
+    exec_result = PyObject(container).exec_run(
+        cmd,
+        stdout,
+        stderr,
+        stdin,
+        tty,
+        privileged,
+        user,
+        detach,
+        stream,
+        socket,
+        environment,
+        workdir,
+        demux,
+    )
+    if stream || socket
+        @warn "`stream` or `socket` is `true`! Unable to determine if there is an error!"
+    else
+        exit_code = first(exec_result)
+        if !iszero(exit_code)
+            @error "the exit code `$exit_code` is not zero! Something wrong happened!"
+        end
+    end
+    return exec_result
+end # function exec_run
 pause(container::Container) = PyObject(container).pause()
 reload(container::Container) = PyObject(container).reload()
 rename(container::Container, name::AbstractString) = PyObject(container).rename(name)
