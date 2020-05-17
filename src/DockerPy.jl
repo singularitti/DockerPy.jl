@@ -48,6 +48,11 @@ macro pyinterface(T)
     end
 end # macro pyinterface
 
+struct Collection{T}
+    o::PyObject
+end
+@pyinterface Collection
+
 include("Images.jl")
 include("Containers.jl")
 include("Client.jl")
