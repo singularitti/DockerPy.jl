@@ -20,6 +20,9 @@ Container(
     kwargs...,
 ) = image.client.containers.run(image.id, command, stdout, stderr, remove, kwargs...)
 
+ExecResult(exit_code, output) = (exit_code = exit_code, output = output)
+ExecResult(x) = ExecResult(x...)
+
 function exec_run(
     container::Container,
     cmd;
@@ -36,7 +39,7 @@ function exec_run(
     workdir = nothing,
     demux = false,
 )
-    exec_result = PyObject(container).exec_run(
+    exec_result = ExecResult(PyObject(container).exec_run(
         cmd,
         stdout,
         stderr,
@@ -50,13 +53,12 @@ function exec_run(
         environment,
         workdir,
         demux,
-    )
+    ))
     if stream || socket || detach
         @warn "`detach`, `stream` or `socket` is `true`! Unable to determine if there is an error!"
     else
-        exit_code = first(exec_result)
-        if !iszero(exit_code)
-            @error "the exit code `$exit_code` is not zero! Something wrong happened!"
+        if !iszero(exec_result.exit_code)
+            @error "the exit code is not zero! Something wrong happened!"
         end
     end
     return exec_result
