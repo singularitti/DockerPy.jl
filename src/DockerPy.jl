@@ -50,4 +50,6 @@ end # macro pyinterface
 
 include("Images.jl")
 include("Containers.jl")
+include("Client.jl")
+
 end
