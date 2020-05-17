@@ -49,4 +49,5 @@ macro pyinterface(T)
 end # macro pyinterface
 
 include("Images.jl")
+include("Containers.jl")
 end
