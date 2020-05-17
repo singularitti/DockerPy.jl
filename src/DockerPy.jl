@@ -48,4 +48,5 @@ macro pyinterface(T)
     end
 end # macro pyinterface
 
+include("Images.jl")
 end
