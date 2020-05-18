@@ -5,7 +5,8 @@ using PyCall: PyObject
 using DockerPy: Collection, docker, @pyinterface
 using DockerPy.Images: Image
 
-export Container, exec_run, pause, reload, rename, restart, start, stats, stop
+export Container,
+    attach, attach_socket, exec_run, pause, reload, rename, restart, start, stats, stop
 
 mutable struct Container
     o::PyObject
@@ -20,6 +21,24 @@ Container(x::ContainerCollection, image::Image; kwargs...) =
 ExecResult(exit_code, output) = (exit_code = exit_code, output = output)
 ExecResult(x) = ExecResult(x...)
 
+"""
+    attach(container::Container; stdout = true, stderr = true, stream = false, logs = false, demux = false)
+
+Attach to this container.
+
+# Arguments
+- `stdout::Bool`: include stdout.
+- `stderr::Bool`: include stderr.
+- `stream::Bool`: return container output progressively as an iterator of strings, rather than a single string.
+- `logs::Bool`: include the container’s previous output.
+"""
+attach(x::Container; kwargs...) = PyObject(x).attach(kwargs...)
+"""
+    attach_socket(container::Container, params = nothing, ws = false)
+
+Like `attach`, but returns the underlying socket-like object for the HTTP request.
+"""
+attach_socket(x::Container; kwargs...) = PyObject(x).attach_socket(kwargs...)
 function exec_run(
     container::Container,
     cmd;
