@@ -4,12 +4,19 @@ using PyCall: PyObject
 
 using DockerPy: Collection, docker, @pyinterface
 
-export Image
+export Image, history, reload, save, tag
 
 mutable struct Image
     o::PyObject
 end
 Image() = Image(docker.models.Image())
+
+history(x::Image) = PyObject(x).history()
+reload(x::Image) = PyObject(x).reload()
+save(x::Image; chunk_size = 2097152, named = false) =
+    PyObject(x).save(chunk_size = chunk_size, named = named)
+tag(x::Image, repository; tag = nothing, kwargs...) =
+    PyObject(x).tag(repository, tag = tag, kwargs...)
 
 function build(
     x::Collection{Image};
