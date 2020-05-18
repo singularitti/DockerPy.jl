@@ -11,6 +11,8 @@ mutable struct Container
     o::PyObject
 end
 Container() = Container(docker.models.Container())
+Container(x::Collection{Container}, image::Image; kwargs...) =
+    Container(PyObject(x).create(PyObject(image); kwargs...))
 
 ExecResult(exit_code, output) = (exit_code = exit_code, output = output)
 ExecResult(x) = ExecResult(x...)
