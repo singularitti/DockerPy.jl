@@ -49,6 +49,7 @@ login(
 )
 ping(x::DockerClient) = PyObject(x).ping()
 version(x::DockerClient) = Dict{String,Any}(PyObject(x).version())
+Base.show(io::IO, x::DockerClient) = print(io, "DockerClient(\"$(objectid(x))\")")
 
 function Base.getproperty(x::DockerClient, name::Symbol)
     if name == :images

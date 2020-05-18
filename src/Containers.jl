@@ -73,6 +73,8 @@ stats(container::Container; decode::Bool = false, stream::Bool = true) =
     PyObject(container).stats(decode = decode, stream = stream)
 stop(container::Container, timeout = nothing) = PyObject(container).stop(timeout = timeout)
 Base.kill(container::Container, signal = nothing) = PyObject(container).kill(signal)
+Base.show(io::IO, x::Container) =
+    print(io, "Container(name = \"$(x.name)\", short_id = \"$(x.short_id)\")")
 
 Base.collect(x::Collection{Container}) = map(Container, PyObject(x).list())
 Base.get(x::Collection{Container}, container_id) = Container(PyObject(x).get(container_id))

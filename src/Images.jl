@@ -17,6 +17,10 @@ save(x::Image; chunk_size = 2097152, named = false) =
     PyObject(x).save(chunk_size = chunk_size, named = named)
 tag(x::Image, repository; tag = nothing, kwargs...) =
     PyObject(x).tag(repository, tag = tag, kwargs...)
+Base.show(io::IO, x::Image) = print(
+    io,
+    "Image(tag = \"$(PyObject(x).tags[1])\", short_id = \"$(PyObject(x).short_id)\")",
+)
 
 function build(
     x::Collection{Image};
