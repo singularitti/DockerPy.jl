@@ -3,8 +3,11 @@ module Client
 using PyCall: PyObject
 
 using DockerPy: Collection, docker, @pyinterface
-using DockerPy.Images: Image
+using DockerPy.Images: Image, pull, push, search
 using DockerPy.Containers: Container
+
+import DockerPy.Images
+import DockerPy.Containers
 
 export DockerClient, images, containers, events, datausage, info, login, ping, version
 
@@ -50,6 +53,13 @@ login(
 ping(x::DockerClient) = PyObject(x).ping()
 version(x::DockerClient) = Dict{String,Any}(PyObject(x).version())
 Base.show(io::IO, x::DockerClient) = print(io, "DockerClient(\"$(objectid(x))\")")
+
+Images.pull(x::DockerClient, repository; kwargs...) = pull(x.images, repository; kwargs...)
+Images.push(x::DockerClient, repository; kwargs...) = push(x.images, repository; kwargs...)
+Images.search(x::DockerClient, term) = search(x.images, term)
+Base.rm(x::DockerClient, image::Image; kwargs...) = rm(x.images, image; kwargs...)
+Containers.Container(x::DockerClient, image::Image; kwargs...) =
+    Container(x.containers, image; kwargs...)
 
 function Base.getproperty(x::DockerClient, name::Symbol)
     if name == :images

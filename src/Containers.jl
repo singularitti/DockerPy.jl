@@ -40,7 +40,7 @@ Like `attach`, but returns the underlying socket-like object for the HTTP reques
 """
 attach_socket(x::Container; kwargs...) = PyObject(x).attach_socket(kwargs...)
 function exec_run(
-    container::Container,
+    x::Container,
     cmd;
     stdout = true,
     stderr = true,
@@ -55,7 +55,7 @@ function exec_run(
     workdir = nothing,
     demux = false,
 )
-    exec_result = ExecResult(PyObject(container).exec_run(
+    exec_result = ExecResult(PyObject(x).exec_run(
         cmd,
         stdout,
         stderr,
@@ -79,16 +79,16 @@ function exec_run(
     end
     return exec_result
 end # function exec_run
-pause(container::Container) = PyObject(container).pause()
-reload(container::Container) = PyObject(container).reload()
-rename(container::Container, name::AbstractString) = PyObject(container).rename(name)
-restart(container::Container; timeout = nothing) =
-    PyObject(container).restart(timeout = timeout)
-start(container::Container) = PyObject(container).start()
-stats(container::Container; decode::Bool = false, stream::Bool = true) =
-    PyObject(container).stats(decode = decode, stream = stream)
-stop(container::Container, timeout = nothing) = PyObject(container).stop(timeout = timeout)
-Base.kill(container::Container, signal = nothing) = PyObject(container).kill(signal)
+pause(x::Container) = PyObject(x).pause()
+reload(x::Container) = PyObject(x).reload()
+rename(x::Container, name::AbstractString) = PyObject(x).rename(name)
+restart(x::Container; timeout = nothing) = PyObject(x).restart(timeout = timeout)
+start(x::Container) = PyObject(x).start()
+stats(x::Container; decode::Bool = false, stream::Bool = true) =
+    PyObject(x).stats(decode = decode, stream = stream)
+stop(x::Container, timeout = nothing) = PyObject(x).stop(timeout = timeout)
+Base.kill(x::Container, signal = nothing) = PyObject(x).kill(signal)
+Base.rm(x::Container; kwargs...) = PyObject(x).remove(kwargs...)
 Base.show(io::IO, x::Container) =
     print(io, "Container(name = \"$(x.name)\", short_id = \"$(x.short_id)\")")
 
