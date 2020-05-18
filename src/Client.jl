@@ -6,7 +6,7 @@ using DockerPy: Collection, docker, @pyinterface
 using DockerPy.Images: Image
 using DockerPy.Containers: Container
 
-export DockerClient, from_env, images, containers, events, datausage, info, login, ping, version
+export DockerClient, images, containers, events, datausage, info, login, ping, version
 
 mutable struct DockerClient
     o::PyObject
@@ -49,15 +49,6 @@ login(
 )
 ping(x::DockerClient) = PyObject(x).ping()
 version(x::DockerClient) = Dict{String,Any}(PyObject(x).version())
-
-from_env(;
-    version = v"1.35",
-    timeout,
-    ssl_version,
-    assert_hostname,
-    environment = ENV,
-    credstore_env,
-) = DockerClient(docker.from_env())
 
 function Base.getproperty(x::DockerClient, name::Symbol)
     if name == :images
