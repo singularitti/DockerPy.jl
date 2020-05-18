@@ -56,7 +56,7 @@ function Base.getproperty(x::DockerClient, name::Symbol)
     elseif name == :containers
         return Collection{Container}(PyObject(x).containers)
     else
-        return getfield(x, name)
+        return getproperty(PyObject(x), name)
     end
 end # function Base.getproperty
 
