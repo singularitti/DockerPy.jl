@@ -4,7 +4,7 @@ using PyCall: PyObject
 
 using DockerPy: Collection, docker, @pyinterface
 
-export Image, history, reload, save, tag
+export Image, history, reload, save, tag, build, push, pull, search
 
 mutable struct Image
     o::PyObject
@@ -73,6 +73,19 @@ function build(
     )
     return Image(result[1]), string(collect(result[2]))
 end # function build
+pull(x::Collection{Image}, repository; tag = nothing, auth_config, platform) =
+    PyObject(x).pull(repository, tag = tag, auth_config = auth_config, platform = platform)
+push(x::Collection{Image}, repository; tag = nothing, stream::Bool, auth_config, decode) =
+    PyObject(x).pull(
+        repository,
+        tag = tag,
+        stream = stream,
+        auth_config = auth_config,
+        decode = decode,
+    )
+search(x::Collection{Image}, term::AbstractString) = PyObject(x).search(term)
+Base.rm(x::Collection{Image}; image, force::Bool, noprune::Bool) =
+    PyObject(x).remove(image = image, force = force, noprune = noprune)
 Base.collect(x::Collection{Image}) = map(Image, PyObject(x).list(all = true))
 Base.get(x::Collection{Image}, name::AbstractString) = Image(PyObject(x).get(name))
 Base.empty!(x::Collection{Image}, filters = nothing) = PyObject(x).prune(filters = filters)
