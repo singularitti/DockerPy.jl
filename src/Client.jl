@@ -27,8 +27,8 @@ DockerClient(;
     credstore_env = credstore_env,
 ))
 
-images(x::DockerClient) = Collection{Image}(PyObject(x).images)
-containers(x::DockerClient) = Collection{Container}(PyObject(x).containers)
+images(x::DockerClient) = collect(x.images)
+containers(x::DockerClient) = collect(x.containers)
 events(x::DockerClient) = PyObject(x).events()
 datausage(x::DockerClient) = Dict{String,Any}(PyObject(x).df())
 info(x::DockerClient) = Dict{String,Any}(PyObject(x).info())
@@ -58,6 +58,16 @@ from_env(;
     environment = ENV,
     credstore_env,
 ) = DockerClient(docker.from_env())
+
+function Base.getproperty(x::DockerClient, name::Symbol)
+    if name == :images
+        return Collection{Image}(PyObject(x).images)
+    elseif name == :containers
+        return Collection{Container}(PyObject(x).containers)
+    else
+        return getfield(x, name)
+    end
+end # function Base.getproperty
 
 @pyinterface DockerClient
 
