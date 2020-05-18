@@ -80,7 +80,7 @@ function build(
     return Image(result[1]), string(collect(result[2]))
 end # function build
 pull(x::ImageCollection, repository; tag = nothing, kwargs...) =
-    PyObject(x).pull(repository, tag = tag, kwargs...)
+    Image.(PyObject(x).pull(repository, tag = tag, kwargs...))
 push(x::ImageCollection, repository; tag = nothing, kwargs...) =
     PyObject(x).pull(repository, tag = tag, kwargs...)
 search(x::ImageCollection, term::AbstractString) = PyObject(x).search(term)
