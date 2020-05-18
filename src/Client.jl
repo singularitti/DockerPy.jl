@@ -6,6 +6,8 @@ using DockerPy: Collection, docker, @pyinterface
 using DockerPy.Images: Image
 using DockerPy.Containers: Container
 
+import DockerPy.Containers
+
 export DockerClient, images, containers, events, datausage, info, login, ping, version
 
 mutable struct DockerClient
@@ -50,6 +52,9 @@ login(
 ping(x::DockerClient) = PyObject(x).ping()
 version(x::DockerClient) = Dict{String,Any}(PyObject(x).version())
 Base.show(io::IO, x::DockerClient) = print(io, "DockerClient(\"$(objectid(x))\")")
+
+Containers.Container(image::Image, client = DockerClient(); kwargs...) =
+    Container(PyObject(client.containers).create(PyObject(image); kwargs...))
 
 function Base.getproperty(x::DockerClient, name::Symbol)
     if name == :images

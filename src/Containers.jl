@@ -11,14 +11,6 @@ mutable struct Container
     o::PyObject
 end
 Container() = Container(docker.models.Container())
-Container(
-    image::Image;
-    command = nothing,
-    stdout = true,
-    stderr = false,
-    remove = false,
-    kwargs...,
-) = image.client.containers.run(image.id, command, stdout, stderr, remove, kwargs...)
 
 ExecResult(exit_code, output) = (exit_code = exit_code, output = output)
 ExecResult(x) = ExecResult(x...)
