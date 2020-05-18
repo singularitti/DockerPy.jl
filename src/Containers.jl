@@ -11,7 +11,10 @@ mutable struct Container
     o::PyObject
 end
 Container() = Container(docker.models.Container())
-Container(x::Collection{Container}, image::Image; kwargs...) =
+
+const ContainerCollection = Collection{Container}
+
+Container(x::ContainerCollection, image::Image; kwargs...) =
     Container(PyObject(x).create(PyObject(image); kwargs...))
 
 ExecResult(exit_code, output) = (exit_code = exit_code, output = output)
@@ -70,9 +73,9 @@ Base.kill(container::Container, signal = nothing) = PyObject(container).kill(sig
 Base.show(io::IO, x::Container) =
     print(io, "Container(name = \"$(x.name)\", short_id = \"$(x.short_id)\")")
 
-Base.collect(x::Collection{Container}) = map(Container, PyObject(x).list())
-Base.get(x::Collection{Container}, container_id) = Container(PyObject(x).get(container_id))
-Base.empty!(x::Collection{Container}, filters = nothing) =
+Base.collect(x::ContainerCollection) = map(Container, PyObject(x).list())
+Base.get(x::ContainerCollection, container_id) = Container(PyObject(x).get(container_id))
+Base.empty!(x::ContainerCollection, filters = nothing) =
     PyObject(x).prune(filters = filters)
 
 @pyinterface Container

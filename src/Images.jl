@@ -22,8 +22,10 @@ Base.show(io::IO, x::Image) = print(
     "Image(tag = \"$(PyObject(x).tags[1])\", short_id = \"$(PyObject(x).short_id)\")",
 )
 
+const ImageCollection = Collection{Image}
+
 function build(
-    x::Collection{Image};
+    x::ImageCollection;
     path::AbstractString,
     fileobj,
     tag::AbstractString,
@@ -77,16 +79,16 @@ function build(
     )
     return Image(result[1]), string(collect(result[2]))
 end # function build
-pull(x::Collection{Image}, repository; tag = nothing, kwargs...) =
+pull(x::ImageCollection, repository; tag = nothing, kwargs...) =
     PyObject(x).pull(repository, tag = tag, kwargs...)
-push(x::Collection{Image}, repository; tag = nothing, kwargs...) =
+push(x::ImageCollection, repository; tag = nothing, kwargs...) =
     PyObject(x).pull(repository, tag = tag, kwargs...)
-search(x::Collection{Image}, term::AbstractString) = PyObject(x).search(term)
-Base.rm(x::Collection{Image}, image; force::Bool = false, noprune::Bool = false) =
+search(x::ImageCollection, term::AbstractString) = PyObject(x).search(term)
+Base.rm(x::ImageCollection, image; force::Bool = false, noprune::Bool = false) =
     PyObject(x).remove(image, force = force, noprune = noprune)
-Base.collect(x::Collection{Image}) = map(Image, PyObject(x).list(all = true))
-Base.get(x::Collection{Image}, name::AbstractString) = Image(PyObject(x).get(name))
-Base.empty!(x::Collection{Image}, filters = nothing) = PyObject(x).prune(filters = filters)
+Base.collect(x::ImageCollection) = map(Image, PyObject(x).list(all = true))
+Base.get(x::ImageCollection, name::AbstractString) = Image(PyObject(x).get(name))
+Base.empty!(x::ImageCollection, filters = nothing) = PyObject(x).prune(filters = filters)
 
 @pyinterface Image
 
