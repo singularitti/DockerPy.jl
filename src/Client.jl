@@ -4,7 +4,7 @@ using PyCall: PyObject
 
 using DockerPy: Collection, docker, @pyinterface
 using DockerPy.Images: Image, pull, push, search
-using DockerPy.Containers: Container
+using DockerPy.Containers: Container, start, stop
 
 import DockerPy.Images
 import DockerPy.Containers
@@ -70,6 +70,25 @@ function Base.getproperty(x::DockerClient, name::Symbol)
         return getproperty(PyObject(x), name)
     end
 end # function Base.getproperty
+
+function Base.open(
+    f::Function,
+    client::DockerClient,
+    image::Image;
+    remove = false,
+    kwargs...,
+)
+    container = Container(client, image, command = "sh", tty = true, stdin_open = true)
+    start(container)
+    try
+        f(container; kwargs...)
+    finally
+        stop(container)
+        if remove
+            rm(container)  # TODO: so slow
+        end
+    end
+end # function Base.open
 
 @pyinterface DockerClient
 
