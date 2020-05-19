@@ -71,11 +71,10 @@ function Base.getproperty(x::DockerClient, name::Symbol)
     end
 end # function Base.getproperty
 
-function Base.open(
+function Containers.start(
     f::Function,
     client::DockerClient,
     image::Image;
-    remove = false,
     kwargs...,
 )
     container = Container(client, image, command = "sh", tty = true, stdin_open = true)
@@ -84,11 +83,9 @@ function Base.open(
         f(container; kwargs...)
     finally
         stop(container)
-        if remove
-            rm(container)  # TODO: so slow
-        end
+        rm(container)  # TODO: so slow
     end
-end # function Base.open
+end # function Containers.start
 
 @pyinterface DockerClient
 
