@@ -5,7 +5,7 @@ using PyCall: PyObject
 using DockerPy: Collection, docker, @pyinterface
 using DockerPy.Images: Image
 
-export Container,
+export Container, DockerPath,
     attach, attach_socket, exec_run, pause, reload, rename, restart, start, stats, stop
 
 mutable struct Container
@@ -20,6 +20,11 @@ Container(x::ContainerCollection, image::Image; kwargs...) =
 
 ExecResult(exit_code, output) = (exit_code = exit_code, output = output)
 ExecResult(x) = ExecResult(x...)
+
+struct DockerPath
+    container::Container
+    path::AbstractString
+end
 
 """
     attach(container::Container; stdout = true, stderr = true, stream = false, logs = false, demux = false)
