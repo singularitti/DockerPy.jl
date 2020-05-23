@@ -1,6 +1,6 @@
 module Containers
 
-using PyCall: PyObject
+using PyCall: PyObject, pybytes
 
 using DockerPy: Collection, docker, @pyinterface
 using DockerPy.Images: Image
@@ -106,6 +106,21 @@ start(x::Container) = PyObject(x).start()
 stats(x::Container; decode::Bool = false, stream::Bool = true) =
     PyObject(x).stats(decode = decode, stream = stream)
 stop(x::Container, timeout = nothing) = PyObject(x).stop(timeout = timeout)
+get_archive(x::Container, path, chunk_size = 2097152) =
+    PyObject(x).get_archive(path, chunk_size = chunk_size)
+put_archive(x::Container, path, data) = PyObject(x).put_archive(path, data)
+function Base.cp(src::DockerPath, dst::AbstractString)
+    container, path = src.container, src.path
+    bits, _ = container.get_archive(path)
+    open(dst, "w") do io
+        for chunk in bits
+            write(io, chunk)
+        end
+    end
+end # function Base.cp
+function Base.cp(src::AbstractString, dst::DockerPath)
+    put_archive(dst.container, dst.path, pybytes(read(src)))
+end # function Base.cp
 Base.kill(x::Container, signal = nothing) = PyObject(x).kill(signal)
 Base.rm(x::Container; kwargs...) = PyObject(x).remove(kwargs...)
 Base.show(io::IO, x::Container) =
