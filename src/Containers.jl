@@ -5,8 +5,21 @@ using PyCall: PyObject
 using DockerPy: Collection, docker, @pyinterface
 using DockerPy.Images: Image
 
-export Container, DockerPath,
-    attach, attach_socket, exec_run, pause, reload, rename, restart, start, stats, stop
+export Container,
+    DockerPath,
+    attach,
+    attach_socket,
+    exec_run,
+    pause,
+    unpause,
+    reload,
+    rename,
+    restart,
+    start,
+    stats,
+    stop,
+    get_archive,
+    put_archive
 
 mutable struct Container
     o::PyObject
@@ -85,6 +98,7 @@ function exec_run(
     return exec_result
 end # function exec_run
 pause(x::Container) = PyObject(x).pause()
+unpause(x::Container) = PyObject(x).unpause()
 reload(x::Container) = PyObject(x).reload()
 rename(x::Container, name::AbstractString) = PyObject(x).rename(name)
 restart(x::Container; timeout = nothing) = PyObject(x).restart(timeout = timeout)
