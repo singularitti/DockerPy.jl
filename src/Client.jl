@@ -71,22 +71,6 @@ function Base.getproperty(x::DockerClient, name::Symbol)
     end
 end # function Base.getproperty
 
-function Containers.start(
-    f::Function,
-    client::DockerClient,
-    image::Image;
-    kwargs...,
-)
-    container = Container(client, image, command = "sh", tty = true, stdin_open = true)
-    start(container)
-    try
-        f(container; kwargs...)
-    finally
-        stop(container)
-        rm(container)  # TODO: so slow
-    end
-end # function Containers.start
-
 @pyinterface DockerClient
 
 end # module Client

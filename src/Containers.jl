@@ -89,6 +89,15 @@ reload(x::Container) = PyObject(x).reload()
 rename(x::Container, name::AbstractString) = PyObject(x).rename(name)
 restart(x::Container; timeout = nothing) = PyObject(x).restart(timeout = timeout)
 start(x::Container) = PyObject(x).start()
+function start(f::Function, x::Container; kwargs...)
+    start(x)
+    try
+        f(x; kwargs...)
+    finally
+        stop(x)
+        rm(x)  # TODO: so slow
+    end
+end # function start
 stats(x::Container; decode::Bool = false, stream::Bool = true) =
     PyObject(x).stats(decode = decode, stream = stream)
 stop(x::Container, timeout = nothing) = PyObject(x).stop(timeout = timeout)
