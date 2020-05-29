@@ -4,7 +4,7 @@ using PyCall: PyObject
 
 using DockerPy: Collection, docker, @pyinterface
 
-export reload
+export Volume, reload
 
 mutable struct Volume
     o::PyObject
@@ -13,6 +13,8 @@ Volume() = Volume(docker.models.volumes.Volume())
 
 reload(x::Volume) = PyObject(x).reload()
 Base.rm(x::Volume; kwargs...) = PyObject(x).remove(kwargs...)
+Base.show(io::IO, x::Volume) =
+    print(io, "Volume(name = \"$(x.name)\", short_id = \"$(x.short_id)\")")
 
 const VolumeCollection = Collection{Volume}
 
