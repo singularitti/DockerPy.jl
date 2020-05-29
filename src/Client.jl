@@ -5,11 +5,13 @@ using PyCall: PyObject
 using DockerPy: Collection, docker, @pyinterface
 using DockerPy.Images: Image, pull, push, search
 using DockerPy.Containers: Container, start, stop
+using DockerPy.Volumes: Volume
 
 import DockerPy.Images
 import DockerPy.Containers
 
-export DockerClient, images, containers, events, datausage, info, login, ping, version
+export DockerClient,
+    images, containers, volumes, events, datausage, info, login, ping, version
 
 mutable struct DockerClient
     o::PyObject
@@ -32,6 +34,7 @@ DockerClient(;
 
 images(x::DockerClient) = collect(x.images)
 containers(x::DockerClient) = collect(x.containers)
+volumes(x::DockerClient) = collect(x.volumes)
 events(x::DockerClient) = PyObject(x).events()
 datausage(x::DockerClient) = Dict{String,Any}(PyObject(x).df())
 info(x::DockerClient) = Dict{String,Any}(PyObject(x).info())
@@ -66,6 +69,8 @@ function Base.getproperty(x::DockerClient, name::Symbol)
         return Collection{Image}(PyObject(x).images)
     elseif name == :containers
         return Collection{Container}(PyObject(x).containers)
+    elseif name == :volumes
+        return Collection{Volume}(PyObject(x).volumes)
     else
         return getproperty(PyObject(x), name)
     end
