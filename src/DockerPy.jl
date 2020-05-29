@@ -55,6 +55,7 @@ end
 
 include("Images.jl")
 include("Containers.jl")
+include("Volumes.jl")
 include("Client.jl")
 
 end
